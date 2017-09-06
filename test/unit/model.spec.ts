@@ -11,4 +11,9 @@ describe('Model', () => {
     const model = new Model('user', 'value')
     assert(model.attrId('name') === 'user_name')
   })
+
+  it('should return requested attribute of value', () => {
+    const model = new Model('user', { name: 'foo' })
+    assert(model.getAttr('name') === 'foo')
+  })
 })

@@ -14,6 +14,10 @@ export class Model {
   attrId(attr: string): string {
     return this.name + '_' + attr
   }
+
+  getAttr(attr: string): any {
+    return this.value[attr]
+  }
 }
 
 export function createModel(name: string, value: any): Model {
