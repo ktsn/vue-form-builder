@@ -1,3 +1,4 @@
+const ts = require('typescript')
 const typescript = require('rollup-plugin-typescript')
 const vue = require('rollup-plugin-vue')
 const replace = require('rollup-plugin-replace')
@@ -10,10 +11,12 @@ const config = {
       css: false
     }),
     typescript({
+      typescript: ts,
       exclude: 'node_modules/**'
     })
   ],
   moduleName: 'VueFormBuilder',
+  exports: 'named',
   banner: `/*!
  * ${meta.name} v${meta.version}
  * ${meta.homepage}
