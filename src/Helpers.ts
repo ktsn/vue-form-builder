@@ -1,33 +1,78 @@
-import { FunctionalComponentOptions } from 'vue'
+import {
+  FunctionalComponentOptions,
+  CreateElement,
+  VNode,
+  VNodeData
+} from 'vue'
+
 import { Model } from './model'
 import { assert } from './utils'
 
-const TextField: FunctionalComponentOptions = {
-  name: 'text-field',
-  functional: true,
+type PropType<T> = { (): T } | { new (...args: any[]): T & object }
 
-  inject: ['formModel'],
+interface PropOptions<T> {
+  type?: PropType<T> | PropType<T>[]
+  required?: boolean;
+  default?: T | null | undefined | (() => object);
+  validator?(value: T): boolean;
+}
 
-  render (h, { data, injections }) {
-    const model = injections.formModel as Model
-    assert(model, '<text-field> must be used in the <form-for> slot')
-    assert(data.attrs && data.attrs.for, `<text-field> requires 'for' attribute`)
+interface HelperGeneratorContext<Props> {
+  data: VNodeData
+  model: Model
+  props: Props
+}
 
-    const attrs = data.attrs!
+type HelperPropOptions<Props> = {
+  [K in keyof Props]: PropOptions<Props[K]>
+}
 
-    const name = attrs.for
-    delete attrs.for
+type HelperGenerator<Props> = (h: CreateElement, ctx: HelperGeneratorContext<Props>) => VNode
 
-    attrs.name = model.attrName(name)
-    attrs.id = model.attrId(name)
-    attrs.type = 'text'
+function createHelper<Props>(
+  name: string,
+  props: HelperPropOptions<Props>,
+  generator: HelperGenerator<Props>
+): FunctionalComponentOptions {
+  return {
+    name,
+    functional: true,
+    inject: ['formModel'],
+
+    render(h, { data, props, injections }) {
+      const model = injections.formModel as Model
+      assert(model, `<${name}> must be used in the <form-for> slot`)
+      return generator(h, {
+        data,
+        model,
+        props
+      })
+    }
+  }
+}
+
+const TextField = createHelper(
+  'text-field',
+  {
+    for: {
+      type: String,
+      required: true
+    }
+  },
+  (h, { data, props, model }) => {
+    const name = props.for
+
+    data.attrs = data.attrs || {}
+    data.attrs.name = model.attrName(name)
+    data.attrs.id = model.attrId(name)
+    data.attrs.type = 'text'
 
     data.domProps = data.domProps || {}
     data.domProps.value = model.getAttr(name)
 
     return h('input', data)
   }
-}
+)
 
 export const helpers: { [key: string]: FunctionalComponentOptions } = {
   TextField
