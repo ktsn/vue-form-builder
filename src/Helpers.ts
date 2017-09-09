@@ -1,5 +1,5 @@
-import {
-  FunctionalComponentOptions,
+import Vue, {
+  ComponentOptions,
   CreateElement,
   VNode,
   VNodeData
@@ -18,7 +18,6 @@ interface PropOptions<T> {
 }
 
 interface HelperGeneratorContext<Props> {
-  data: VNodeData
   model: Model
   props: Props
 }
@@ -33,22 +32,25 @@ function createHelper<Props>(
   name: string,
   props: HelperPropOptions<Props>,
   generator: HelperGenerator<Props>
-): FunctionalComponentOptions {
+): ComponentOptions<Vue & { getModel: () => Model }> {
   return {
     name,
-    functional: true,
-    inject: ['formModel'],
+    props: props as any,
+    inject: ['getModel'],
 
-    render(h, { data, props, injections }) {
-      const model = injections.formModel as Model
+    render(h) {
+      const model = this.getModel()
       assert(model, `<${name}> must be used in the <form-for> slot`)
       return generator(h, {
-        data,
         model,
-        props
+        props: this.$props
       })
     }
   }
+}
+
+function value(event: Event): any {
+  return (event.target as any).value
 }
 
 const TextField = createHelper(
@@ -59,22 +61,26 @@ const TextField = createHelper(
       required: true
     }
   },
-  (h, { data, props, model }) => {
+  (h, { props, model }) => {
     const name = props.for
 
-    data.attrs = data.attrs || {}
-    data.attrs.name = model.attrName(name)
-    data.attrs.id = model.attrId(name)
-    data.attrs.type = 'text'
-
-    data.domProps = data.domProps || {}
-    data.domProps.value = model.getAttr(name)
-
-    return h('input', data)
+    return h('input', {
+      attrs: {
+        type: 'text',
+        name: model.attrName(name),
+        id: model.attrId(name)
+      },
+      domProps: {
+        value: model.getAttr(name)
+      },
+      on: {
+        input: model.createInputListener(name, value)
+      }
+    })
   }
 )
 
-export const helpers: { [key: string]: FunctionalComponentOptions } = {
+export const helpers: { [key: string]: ComponentOptions<Vue> } = {
   TextField
 }
 
