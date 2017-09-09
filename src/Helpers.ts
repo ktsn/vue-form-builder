@@ -83,10 +83,3 @@ const TextField = createHelper(
 export const helpers: { [key: string]: ComponentOptions<Vue> } = {
   TextField
 }
-
-// Temp fix
-declare module 'vue/types/options' {
-  interface FunctionalComponentOptions {
-    inject?: ComponentOptions<any>['inject']
-  }
-}
