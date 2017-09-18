@@ -78,6 +78,20 @@ function inputValue(wrapper: Wrapper<Vue>, selector: string, value: string): voi
   wrapper.find(selector).trigger('input')
 }
 
+function assertSelected(wrapper: Wrapper<Vue>, selector: string, value: string | string[]): void {
+  if (typeof value === 'string') {
+    value = [value]
+  }
+  const select = q(wrapper, selector)
+  const selected = Array.from<HTMLOptionElement>(select.options).filter(option => {
+    return option.selected
+  }).map(option => {
+    return option.value
+  })
+
+  assert.deepStrictEqual(selected.sort(), value.sort())
+}
+
 function changeSelect(wrapper: Wrapper<Vue>, selector: string, value: string | string[]): void {
   if (typeof value === 'string') {
     value = [value]
@@ -587,7 +601,7 @@ describe('Helpers', () => {
       `))
 
       assertAttrs(wrapper, 'select', null, 'gender')
-      assertValue(wrapper, 'select', 'male')
+      assertSelected(wrapper, 'select', 'male')
 
       assert(wrapper.findAll('option').length === 2)
     })
@@ -600,10 +614,10 @@ describe('Helpers', () => {
       </select-field>
       `))
 
-      assertValue(wrapper, 'select', 'male')
+      assertSelected(wrapper, 'select', 'male')
       wrapper.vm.user.gender = 'female'
       return Vue.nextTick().then(() => {
-        assertValue(wrapper, 'select', 'female')
+        assertSelected(wrapper, 'select', 'female')
       })
     })
 
@@ -616,14 +630,17 @@ describe('Helpers', () => {
       `))
 
       assert(wrapper.vm.user.gender === 'male')
-      assertValue(wrapper, 'select', 'male')
+      assertSelected(wrapper, 'select', 'male')
 
       changeSelect(wrapper, 'select', 'female')
 
       return Vue.nextTick().then(() => {
         assert(wrapper.vm.user.gender === 'female')
-        assertValue(wrapper, 'select', 'female')
+        assertSelected(wrapper, 'select', 'female')
       })
     })
+  })
+
+  describe('select-field (multiple)', () => {
   })
 })
