@@ -49,37 +49,77 @@ function createHelper<Props>(
   }
 }
 
+function createInputHelper(
+  name: string,
+  type: string,
+  getValue: (event: Event) => any = value
+): ComponentOptions<Vue> {
+  return createHelper(
+    name,
+    {
+      for: {
+        type: String,
+        required: true
+      }
+    },
+    (h, { props, model }) => {
+      const name = props.for
+
+      return h('input', {
+        attrs: {
+          type,
+          name: model.attrName(name),
+          id: model.attrId(name)
+        },
+        domProps: {
+          value: model.getAttr(name)
+        },
+        on: {
+          input: model.createInputListener(name, getValue)
+        }
+      })
+    }
+  )
+}
+
 function value(event: Event): any {
   return (event.target as any).value
 }
 
-const TextField = createHelper(
-  'text-field',
-  {
-    for: {
-      type: String,
-      required: true
-    }
-  },
-  (h, { props, model }) => {
-    const name = props.for
+function number(event: Event): any {
+  return Number(value(event))
+}
 
-    return h('input', {
-      attrs: {
-        type: 'text',
-        name: model.attrName(name),
-        id: model.attrId(name)
-      },
-      domProps: {
-        value: model.getAttr(name)
-      },
-      on: {
-        input: model.createInputListener(name, value)
-      }
-    })
-  }
-)
+const TextField = createInputHelper('text-field', 'text')
+const NumberField = createInputHelper('number-field', 'number', number)
+const EmailField = createInputHelper('email-field', 'email')
+const UrlField = createInputHelper('url-field', 'url')
+const TelField = createInputHelper('tel-field', 'tel')
+const SearchField = createInputHelper('search-field', 'search')
+const PasswordField = createInputHelper('password-field', 'password')
+const MonthField = createInputHelper('month-field', 'month')
+const WeekField = createInputHelper('week-field', 'week')
+const DatetimeField = createInputHelper('datetime-field', 'datetime')
+const DatetimeLocalField = createInputHelper('datetime-local-field', 'datetime-local')
+const DateField = createInputHelper('date-field', 'date')
+const TimeField = createInputHelper('time-field', 'time')
+const ColorField = createInputHelper('color-field', 'color')
+const RangeField = createInputHelper('range-field', 'range', number)
 
 export const helpers: { [key: string]: ComponentOptions<Vue> } = {
-  TextField
+  TextField,
+  NumberField,
+  EmailField,
+  UrlField,
+  TelField,
+  SearchField,
+  PasswordField,
+  MonthField,
+  WeekField,
+  DatetimeField,
+  DatetimeLocalField,
+  DateField,
+  TimeField,
+  ColorField,
+  RangeField
 }
