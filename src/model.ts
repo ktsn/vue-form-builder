@@ -11,6 +11,10 @@ export class Model {
   ) {
   }
 
+  isMultiple(attr: string): boolean {
+    return Array.isArray(this.value[attr])
+  }
+
   input(attr: string, value: any): void {
     this.cb(assign({}, this.value, {
       [attr]: value
@@ -18,7 +22,8 @@ export class Model {
   }
 
   attrName(attr: string): string {
-    return this.name + '[' + attr + ']'
+    const suffix = this.isMultiple(attr) ? '[]' : ''
+    return this.name + '[' + attr + ']' + suffix
   }
 
   attrId(attr: string): string {
@@ -27,16 +32,6 @@ export class Model {
 
   getAttr(attr: string): any {
     return this.value[attr]
-  }
-
-  createInputListener(
-    attr: string,
-    getValue: (event: Event) => any
-  ): (event: Event) => void {
-    return event => {
-      const value = getValue(event)
-      this.input(attr, value)
-    }
   }
 }
 

@@ -9,6 +9,7 @@ interface Root extends Vue {
     name: string
     age: number
     gender: string
+    likes: string[]
     email: string
     url: string
     phone: string
@@ -35,6 +36,7 @@ function create(slot: string): ComponentOptions<Root> {
           name: 'foo',
           age: 20,
           gender: 'male',
+          likes: ['apple', 'orange'],
           email: 'bar@example.com',
           url: 'https://example.com',
           phone: '090-1234-5678',
@@ -59,12 +61,19 @@ function q(wrapper: Wrapper<Vue>, selector: string): any {
   return wrapper.vm.$el.querySelector(selector)!
 }
 
-function assertAttrs(wrapper: Wrapper<Vue>, selector: string, type: string | null, attr: string): void {
+function assertAttrs(
+  wrapper: Wrapper<Vue>,
+  selector: string,
+  type: string | null,
+  attr: string,
+  multiple: boolean = false
+): void {
   const input = wrapper.find(selector)
   if (type) {
     assert(input.hasAttribute('type', type))
   }
-  assert(input.hasAttribute('name', `user[${attr}]`))
+  const suffix = multiple ? '[]' : ''
+  assert(input.hasAttribute('name', `user[${attr}]${suffix}`))
   assert(input.hasAttribute('id', `user_${attr}`))
 }
 
@@ -606,6 +615,17 @@ describe('Helpers', () => {
       assert(wrapper.findAll('option').length === 2)
     })
 
+    it('should select single value if the value is not an array', () => {
+      const wrapper = mount(create(`
+      <select-field for="gender">
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select-field>
+      `))
+
+      assert(q(wrapper, 'select').multiple === false)
+    })
+
     it('should update its value with changing model', () => {
       const wrapper = mount(create(`
       <select-field for="gender">
@@ -642,5 +662,67 @@ describe('Helpers', () => {
   })
 
   describe('select-field (multiple)', () => {
+    it('should be converted to select element', () => {
+      const wrapper = mount(create(`
+      <select-field for="likes">
+        <option value="apple">Apple</option>
+        <option value="orange">Orange</option>
+        <option value="banana">Banana</option>
+      </select-field>
+      `))
+
+      assertAttrs(wrapper, 'select', null, 'likes', true)
+      assertSelected(wrapper, 'select', ['apple', 'orange'])
+
+      assert(wrapper.findAll('option').length === 3)
+    })
+
+    it('should select multiple value if the value is an array', () => {
+      const wrapper = mount(create(`
+      <select-field for="likes">
+        <option value="apple">Apple</option>
+        <option value="orange">Orange</option>
+        <option value="banana">Banana</option>
+      </select-field>
+      `))
+
+      assert(q(wrapper, 'select').multiple === true)
+    })
+
+    it('should update its value with changing model', () => {
+      const wrapper = mount(create(`
+      <select-field for="likes">
+        <option value="apple">Apple</option>
+        <option value="orange">Orange</option>
+        <option value="banana">Banana</option>
+      </select-field>
+      `))
+
+      assertSelected(wrapper, 'select', ['apple', 'orange'])
+      wrapper.vm.user.likes = ['apple', 'banana']
+      return Vue.nextTick().then(() => {
+        assertSelected(wrapper, 'select', ['apple', 'banana'])
+      })
+    })
+
+    it('should update model with the input event from the field', () => {
+      const wrapper = mount(create(`
+      <select-field for="likes">
+        <option value="apple">Apple</option>
+        <option value="orange">Orange</option>
+        <option value="banana">Banana</option>
+      </select-field>
+      `))
+
+      assert.deepEqual(wrapper.vm.user.likes, ['apple', 'orange'])
+      assertSelected(wrapper, 'select', ['apple', 'orange'])
+
+      changeSelect(wrapper, 'select', ['apple', 'banana'])
+
+      return Vue.nextTick().then(() => {
+        assert.deepEqual(wrapper.vm.user.likes, ['apple', 'banana'])
+        assertSelected(wrapper, 'select', ['apple', 'banana'])
+      })
+    })
   })
 })

@@ -12,3 +12,16 @@ export function assert(condition: any, message: string): void {
     throw new Error('[vue-form-builder] ' + message)
   }
 }
+
+export function toArray<T>(arrayLike: ArrayLike<T>): T[] {
+  return Array.prototype.slice.call(arrayLike)
+}
+
+export function looseIndexOf<T>(list: T[], value: T): number {
+  for (let i = 0, len = list.length; i < len; i++) {
+    if (list[i] == value) {
+      return i
+    }
+  }
+  return -1
+}

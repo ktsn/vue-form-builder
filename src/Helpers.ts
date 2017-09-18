@@ -2,11 +2,12 @@ import Vue, {
   ComponentOptions,
   CreateElement,
   VNode,
-  VNodeData
+  VNodeData,
+  VNodeDirective
 } from 'vue'
 
 import { Model } from './model'
-import { assert } from './utils'
+import { assert, toArray, looseIndexOf } from './utils'
 
 type PropType<T> = { (): T } | { new (...args: any[]): T & object }
 
@@ -29,6 +30,39 @@ type HelperPropOptions<Props> = {
 
 type HelperGenerator<Props> = (h: CreateElement, ctx: HelperGeneratorContext<Props>) => VNode
 
+const selectValueDirective = {
+  bind: setSelected,
+  componentUpdated: setSelected
+}
+
+// Borrowed from vue's v-model directive
+function setSelected(el: HTMLSelectElement, binding: VNodeDirective): void {
+  const multiple = el.multiple
+  const value = binding.value
+
+  for (let i = 0, len = el.options.length; i < len; i++) {
+    const option = el.options[i]
+
+    if (multiple) {
+      const selected = looseIndexOf(value, option.value) > -1
+      if (option.selected !== selected) {
+        option.selected = selected
+      }
+    } else {
+      if (option.value == value) {
+        if (el.selectedIndex !== i) {
+          el.selectedIndex = i
+        }
+        return
+      }
+    }
+  }
+
+  if (!multiple) {
+    el.selectedIndex = -1
+  }
+}
+
 function createHelper<Props>(
   name: string,
   props: HelperPropOptions<Props>,
@@ -38,6 +72,9 @@ function createHelper<Props>(
     name,
     props: props as any,
     inject: ['getModel'],
+    directives: {
+      selectValue: selectValueDirective
+    },
 
     render(h) {
       const model = this.getModel()
@@ -77,11 +114,36 @@ function createInputHelper(
           value: model.getAttr(name)
         },
         on: {
-          input: model.createInputListener(name, getValue)
+          input: createInputListener(model, name, getValue)
         }
       })
     }
   )
+}
+
+
+function createInputListener(
+  model: Model,
+  attr: string,
+  getValue: (event: Event) => any
+): (event: Event) => void {
+  return event => {
+    const value = getValue(event)
+    model.input(attr, value)
+  }
+}
+
+function createSelectListener(
+  model: Model,
+  attr: string
+): (event: Event) => void {
+  return event => {
+    const el = event.target as HTMLSelectElement
+    const selected = toArray(el.options)
+      .filter(option => option.selected)
+      .map(option => option.value)
+    model.input(attr, el.multiple ? selected : selected[0])
+  }
 }
 
 function value(event: Event): any {
@@ -123,14 +185,18 @@ const SelectField = createHelper(
     return h('select', {
       attrs: {
         name: model.attrName(name),
-        id: model.attrId(name)
-      },
-      domProps: {
-        value: model.getAttr(name)
+        id: model.attrId(name),
+        multiple: model.isMultiple(name)
       },
       on: {
-        change: model.createInputListener(name, value)
-      }
+        change: createSelectListener(model, name)
+      },
+      directives: [
+        {
+          name: 'selectValue',
+          value: model.getAttr(name)
+        } as VNodeDirective
+      ]
     }, children)
   }
 )

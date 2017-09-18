@@ -18,4 +18,14 @@ describe('Model', () => {
     const model = new Model('user', { name: 'foo' }, noop)
     assert(model.getAttr('name') === 'foo')
   })
+
+  it('should return true if the attr can be specify multi-values', () => {
+    const model = new Model('user', {
+      likes: ['video', 'music'],
+      name: 'foo'
+    }, noop)
+
+    assert(model.isMultiple('likes') === true)
+    assert(model.isMultiple('name') === false)
+  })
 })
