@@ -19,7 +19,8 @@ interface PropOptions<T> {
 
 interface HelperGeneratorContext<Props> {
   model: Model
-  props: Props
+  props: Props,
+  children: VNode[]
 }
 
 type HelperPropOptions<Props> = {
@@ -43,7 +44,8 @@ function createHelper<Props>(
       assert(model, `<${name}> must be used in the <form-for> slot`)
       return generator(h, {
         model,
-        props: this.$props
+        props: this.$props,
+        children: this.$slots.default
       })
     }
   }
@@ -107,6 +109,32 @@ const ColorField = createInputHelper('color-field', 'color')
 const RangeField = createInputHelper('range-field', 'range', number)
 const HiddenField = createInputHelper('hidden-field', 'hidden')
 
+const SelectField = createHelper(
+  'select-field',
+  {
+    for: {
+      type: String,
+      required: true
+    }
+  },
+  (h, { model, props, children }) => {
+    const name = props.for
+
+    return h('select', {
+      attrs: {
+        name: model.attrName(name),
+        id: model.attrId(name)
+      },
+      domProps: {
+        value: model.getAttr(name)
+      },
+      on: {
+        input: model.createInputListener(name, value)
+      }
+    }, children)
+  }
+)
+
 export const helpers: { [key: string]: ComponentOptions<Vue> } = {
   TextField,
   NumberField,
@@ -123,5 +151,6 @@ export const helpers: { [key: string]: ComponentOptions<Vue> } = {
   TimeField,
   ColorField,
   RangeField,
-  HiddenField
+  HiddenField,
+  SelectField
 }

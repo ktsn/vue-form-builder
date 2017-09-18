@@ -8,6 +8,7 @@ interface Root extends Vue {
   user: {
     name: string
     age: number
+    gender: string
     email: string
     url: string
     phone: string
@@ -33,6 +34,7 @@ function create(slot: string): ComponentOptions<Root> {
         user: {
           name: 'foo',
           age: 20,
+          gender: 'male',
           email: 'bar@example.com',
           url: 'https://example.com',
           phone: '090-1234-5678',
@@ -57,9 +59,11 @@ function q(wrapper: Wrapper<Vue>, selector: string): any {
   return wrapper.vm.$el.querySelector(selector)!
 }
 
-function assertAttrs(wrapper: Wrapper<Vue>, selector: string, type: string, attr: string): void {
+function assertAttrs(wrapper: Wrapper<Vue>, selector: string, type: string | null, attr: string): void {
   const input = wrapper.find(selector)
-  assert(input.hasAttribute('type', type))
+  if (type) {
+    assert(input.hasAttribute('type', type))
+  }
   assert(input.hasAttribute('name', `user[${attr}]`))
   assert(input.hasAttribute('id', `user_${attr}`))
 }
@@ -558,6 +562,56 @@ describe('Helpers', () => {
       wrapper.vm.user.name = 'bar'
       return Vue.nextTick().then(() => {
         assertValue(wrapper, 'input', 'bar')
+      })
+    })
+  })
+
+  describe('select-field', () => {
+    it('should be converted to select element', () => {
+      const wrapper = mount(create(`
+      <select-field for="gender">
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select-field>
+      `))
+
+      assertAttrs(wrapper, 'select', null, 'gender')
+      assertValue(wrapper, 'select', 'male')
+
+      assert(wrapper.findAll('option').length === 2)
+    })
+
+    it('should update its value with changing model', () => {
+      const wrapper = mount(create(`
+      <select-field for="gender">
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select-field>
+      `))
+
+      assertValue(wrapper, 'select', 'male')
+      wrapper.vm.user.gender = 'female'
+      return Vue.nextTick().then(() => {
+        assertValue(wrapper, 'select', 'female')
+      })
+    })
+
+    it('should update model with the input event from the field', () => {
+      const wrapper = mount(create(`
+      <select-field for="gender">
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select-field>
+      `))
+
+      assert(wrapper.vm.user.gender === 'male')
+      assertValue(wrapper, 'select', 'male')
+
+      inputValue(wrapper, 'select', 'female')
+
+      return Vue.nextTick().then(() => {
+        assert(wrapper.vm.user.gender === 'female')
+        assertValue(wrapper, 'select', 'female')
       })
     })
   })
