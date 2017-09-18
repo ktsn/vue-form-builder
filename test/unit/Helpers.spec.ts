@@ -78,6 +78,17 @@ function inputValue(wrapper: Wrapper<Vue>, selector: string, value: string): voi
   wrapper.find(selector).trigger('input')
 }
 
+function changeSelect(wrapper: Wrapper<Vue>, selector: string, value: string | string[]): void {
+  if (typeof value === 'string') {
+    value = [value]
+  }
+  const select = q(wrapper, selector)
+  Array.from<HTMLOptionElement>(select.options).forEach(option => {
+    option.selected = value.indexOf(option.value) >= 0
+  })
+  wrapper.find(selector).trigger('change')
+}
+
 describe('Helpers', () => {
   describe('text-field', () => {
     it('should be converted to input element', () => {
@@ -607,7 +618,7 @@ describe('Helpers', () => {
       assert(wrapper.vm.user.gender === 'male')
       assertValue(wrapper, 'select', 'male')
 
-      inputValue(wrapper, 'select', 'female')
+      changeSelect(wrapper, 'select', 'female')
 
       return Vue.nextTick().then(() => {
         assert(wrapper.vm.user.gender === 'female')

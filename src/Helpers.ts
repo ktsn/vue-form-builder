@@ -129,7 +129,7 @@ const SelectField = createHelper(
         value: model.getAttr(name)
       },
       on: {
-        input: model.createInputListener(name, value)
+        change: model.createInputListener(name, value)
       }
     }, children)
   }
