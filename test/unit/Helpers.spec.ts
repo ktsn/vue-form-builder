@@ -542,4 +542,23 @@ describe('Helpers', () => {
       })
     })
   })
+
+  describe('hidden-field', () => {
+    it('should be converted to input element', () => {
+      const wrapper = mount(create(`<hidden-field for="name"></hidden-field>`))
+
+      assertAttrs(wrapper, 'input', 'hidden', 'name')
+      assertValue(wrapper, 'input', 'foo')
+    })
+
+    it('should update its value with changing model', () => {
+      const wrapper = mount(create(`<hidden-field for="name"></hidden-field>`))
+
+      assertValue(wrapper, 'input', 'foo')
+      wrapper.vm.user.name = 'bar'
+      return Vue.nextTick().then(() => {
+        assertValue(wrapper, 'input', 'bar')
+      })
+    })
+  })
 })

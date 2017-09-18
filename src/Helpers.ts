@@ -105,6 +105,7 @@ const DateField = createInputHelper('date-field', 'date')
 const TimeField = createInputHelper('time-field', 'time')
 const ColorField = createInputHelper('color-field', 'color')
 const RangeField = createInputHelper('range-field', 'range', number)
+const HiddenField = createInputHelper('hidden-field', 'hidden')
 
 export const helpers: { [key: string]: ComponentOptions<Vue> } = {
   TextField,
@@ -121,5 +122,6 @@ export const helpers: { [key: string]: ComponentOptions<Vue> } = {
   DateField,
   TimeField,
   ColorField,
-  RangeField
+  RangeField,
+  HiddenField
 }
