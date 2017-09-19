@@ -91,7 +91,7 @@ function createHelper<Props>(
 function createInputHelper(
   name: string,
   type: string,
-  getValue: (event: Event) => any = value
+  getValueFn: (event: Event) => any = getValue
 ): ComponentOptions<Vue> {
   return createHelper(
     name,
@@ -114,7 +114,7 @@ function createInputHelper(
           value: model.getAttr(name)
         },
         on: {
-          input: createInputListener(model, name, getValue)
+          input: createInputListener(model, name, getValueFn)
         }
       })
     }
@@ -146,16 +146,16 @@ function createSelectListener(
   }
 }
 
-function value(event: Event): any {
+function getValue(event: Event): any {
   return (event.target as any).value
 }
 
-function number(event: Event): any {
-  return Number(value(event))
+function getNumber(event: Event): any {
+  return Number(getValue(event))
 }
 
 const TextField = createInputHelper('text-field', 'text')
-const NumberField = createInputHelper('number-field', 'number', number)
+const NumberField = createInputHelper('number-field', 'number', getNumber)
 const EmailField = createInputHelper('email-field', 'email')
 const UrlField = createInputHelper('url-field', 'url')
 const TelField = createInputHelper('tel-field', 'tel')
@@ -168,7 +168,7 @@ const DatetimeLocalField = createInputHelper('datetime-local-field', 'datetime-l
 const DateField = createInputHelper('date-field', 'date')
 const TimeField = createInputHelper('time-field', 'time')
 const ColorField = createInputHelper('color-field', 'color')
-const RangeField = createInputHelper('range-field', 'range', number)
+const RangeField = createInputHelper('range-field', 'range', getNumber)
 const HiddenField = createInputHelper('hidden-field', 'hidden')
 
 const SelectField = createHelper(
