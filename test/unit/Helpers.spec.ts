@@ -61,6 +61,10 @@ function q(wrapper: Wrapper<Vue>, selector: string): any {
   return wrapper.vm.$el.querySelector(selector)!
 }
 
+function qAll(wrapper: Wrapper<Vue>, selector: string): any[] {
+  return Array.from(wrapper.vm.$el.querySelectorAll(selector))
+}
+
 function assertAttrs(
   wrapper: Wrapper<Vue>,
   selector: string,
@@ -109,6 +113,24 @@ function changeSelect(wrapper: Wrapper<Vue>, selector: string, value: string | s
   Array.from<HTMLOptionElement>(select.options).forEach(option => {
     option.selected = value.indexOf(option.value) >= 0
   })
+  wrapper.find(selector).trigger('change')
+}
+
+function assertChecked(wrapper: Wrapper<Vue>, selector: string, value: string | string[]): void {
+  if (typeof value === 'string') {
+    value = [value]
+  }
+  const checked = qAll(wrapper, selector).filter(el => {
+    return el.checked
+  }).map(el => {
+    return el.value
+  })
+
+  assert.deepStrictEqual(checked.sort(), value.sort())
+}
+
+function changeCheck(wrapper: Wrapper<Vue>, selector: string, checked: boolean): void {
+  q(wrapper, selector).checked = checked
   wrapper.find(selector).trigger('change')
 }
 
@@ -547,7 +569,6 @@ describe('Helpers', () => {
     })
   })
 
-
   describe('range-field', () => {
     it('should be converted to input element', () => {
       const wrapper = mount(create(`<range-field for="age"></range-field>`))
@@ -725,4 +746,58 @@ describe('Helpers', () => {
       })
     })
   })
+
+  describe('radio-button', () => {
+    it('should be converted to input element', () => {
+      const wrapper = mount(create(`
+        <radio-button for="gender" value="male"></radio-button>
+        <radio-button for="gender" value="female"></radio-button>
+      `))
+
+      const r1 = q(wrapper, 'input:nth-child(1)')
+      assert(r1.type === 'radio')
+      assert(r1.name === 'user[gender]')
+      assert(r1.id === 'user_gender_male')
+      assert(r1.value === 'male')
+
+      const r2 = q(wrapper, 'input:nth-child(2)')
+      assert(r2.type === 'radio')
+      assert(r2.name === 'user[gender]')
+      assert(r2.id === 'user_gender_female')
+      assert(r2.value === 'female')
+
+      assertChecked(wrapper, 'input', 'male')
+    })
+
+    it('should update its value with changing model', () => {
+      const wrapper = mount(create(`
+        <radio-button for="gender" value="male"></radio-button>
+        <radio-button for="gender" value="female"></radio-button>
+      `))
+
+      assertChecked(wrapper, 'input', 'male')
+      wrapper.vm.user.gender = 'female'
+      return Vue.nextTick().then(() => {
+        assertChecked(wrapper, 'input', 'female')
+      })
+    })
+
+    it('should update model with the input event from the field', () => {
+      const wrapper = mount(create(`
+        <radio-button for="gender" value="male"></radio-button>
+        <radio-button for="gender" value="female"></radio-button>
+      `))
+
+      assert(wrapper.vm.user.gender === 'male')
+      assertChecked(wrapper, 'input', 'male')
+
+      changeCheck(wrapper, 'input:nth-child(2)', true)
+
+      return Vue.nextTick().then(() => {
+        assert(wrapper.vm.user.gender === 'female')
+        assertChecked(wrapper, 'input', 'female')
+      })
+    })
+  })
+
 })

@@ -26,8 +26,8 @@ export class Model {
     return this.name + '[' + attr + ']' + suffix
   }
 
-  attrId(attr: string): string {
-    return this.name + '_' + attr
+  attrId(attr: string, value?: string): string {
+    return this.name + '_' + attr + (value ? '_' + value : '')
   }
 
   getAttr(attr: string): any {

@@ -171,6 +171,38 @@ const ColorField = createInputHelper('color-field', 'color')
 const RangeField = createInputHelper('range-field', 'range', getNumber)
 const HiddenField = createInputHelper('hidden-field', 'hidden')
 
+const RadioButton = createHelper(
+  'radio-button',
+  {
+    for: {
+      type: String,
+      required: true
+    },
+    value: {
+      type: null as any as { (): any },
+      required: true
+    }
+  },
+  (h, { model, props }) => {
+    const { for: name, value } = props
+
+    return h('input', {
+      attrs: {
+        type: 'radio',
+        name: model.attrName(name),
+        id: model.attrId(name, value)
+      },
+      domProps: {
+        value,
+        checked: model.getAttr(name) == value
+      },
+      on: {
+        change: createInputListener(model, name, getValue)
+      }
+    })
+  }
+)
+
 const SelectField = createHelper(
   'select-field',
   {
@@ -218,5 +250,6 @@ export const helpers: { [key: string]: ComponentOptions<Vue> } = {
   ColorField,
   RangeField,
   HiddenField,
+  RadioButton,
   SelectField
 }
