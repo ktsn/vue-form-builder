@@ -6,7 +6,7 @@ type Subscriber = (value: any) => void
 export class Model {
   constructor(
     readonly name: string,
-    readonly value: any,
+    private value: any,
     private cb: Subscriber
   ) {
   }
@@ -16,9 +16,10 @@ export class Model {
   }
 
   input(attr: string, value: any): void {
-    this.cb(assign({}, this.value, {
+    this.value = assign({}, this.value, {
       [attr]: value
-    }))
+    })
+    this.cb(this.value)
   }
 
   attrName(attr: string): string {

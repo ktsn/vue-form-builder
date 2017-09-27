@@ -20,6 +20,7 @@ interface Root extends Vue {
     week: string
     date: string
     datetime: string
+    hasPhone: boolean
   }
 }
 
@@ -46,7 +47,8 @@ function create(slot: string): ComponentOptions<Root> {
           month: '2017-01',
           week: '2017-W01',
           date: '2017-01-01',
-          datetime: '2017-01-01T08:30'
+          datetime: '2017-01-01T08:30',
+          hasPhone: true
         }
       }
     },
@@ -70,15 +72,17 @@ function assertAttrs(
   selector: string,
   type: string | null,
   attr: string,
-  multiple: boolean = false
+  multiple: boolean = false,
+  value: any = ''
 ): void {
   const input = wrapper.find(selector)
   if (type) {
     assert(input.hasAttribute('type', type))
   }
-  const suffix = multiple ? '[]' : ''
-  assert(input.hasAttribute('name', `user[${attr}]${suffix}`))
-  assert(input.hasAttribute('id', `user_${attr}`))
+  const suffixName = multiple ? '[]' : ''
+  const suffixId = value ? '_' + value : ''
+  assert(input.hasAttribute('name', `user[${attr}]${suffixName}`))
+  assert(input.hasAttribute('id', `user_${attr}${suffixId}`))
 }
 
 function assertValue(wrapper: Wrapper<Vue>, selector: string, value: string): void {
@@ -800,4 +804,114 @@ describe('Helpers', () => {
     })
   })
 
+  describe('checkbox (single)', () => {
+    it('should be converted to input element', () => {
+      const wrapper = mount(create(`<checkbox for="hasPhone"></checkbox>`))
+
+      assertAttrs(wrapper, 'input', 'checkbox', 'hasPhone')
+      const checkbox = q(wrapper, 'input')
+      assert(checkbox.checked === true)
+    })
+
+    it('should update its value with changing model', () => {
+      const wrapper = mount(create(`<checkbox for="hasPhone"></checkbox>`))
+
+      const checkbox = q(wrapper, 'input')
+      assert(checkbox.checked === true)
+      wrapper.vm.user.hasPhone = false
+      return Vue.nextTick().then(() => {
+        assert(checkbox.checked === false)
+      })
+    })
+
+    it('should update model with the input event from the field', () => {
+      const wrapper = mount(create(`<checkbox for="hasPhone"></checkbox>`))
+
+      const checkbox = q(wrapper, 'input')
+
+      assert(wrapper.vm.user.hasPhone === true)
+      assert(checkbox.checked === true)
+
+      changeCheck(wrapper, 'input', false)
+
+      return Vue.nextTick().then(() => {
+        assert(wrapper.vm.user.hasPhone === false)
+        assert(checkbox.checked === false)
+      })
+    })
+
+    it('should be specified true value and false value', () => {
+      const wrapper = mount(create(
+        `<checkbox for="gender" true-value="male" false-value="female"></checkbox>`
+      ))
+
+      const checkbox = q(wrapper, 'input')
+      assert(wrapper.vm.user.gender === 'male')
+      assert(checkbox.checked === true)
+
+      // Update model
+      wrapper.vm.user.gender = 'female'
+
+      return Vue.nextTick().then(() => {
+        assert(wrapper.vm.user.gender === 'female')
+        assert(checkbox.checked === false)
+
+        // Update checkbox
+        changeCheck(wrapper, 'input', true)
+
+        return Vue.nextTick()
+      }).then(() => {
+        assert(wrapper.vm.user.gender === 'male')
+        assert(checkbox.checked === true)
+      })
+    })
+  })
+
+  describe('checkbox (multiple)', () => {
+    it('should be converted to input element', () => {
+      const wrapper = mount(create(`
+      <checkbox for="likes" value="apple"></checkbox>
+      <checkbox for="likes" value="orange"></checkbox>
+      <checkbox for="likes" value="banana"></checkbox>
+      `))
+
+      assertAttrs(wrapper, 'input:nth-child(1)', 'checkbox', 'likes', true, 'apple')
+      assertAttrs(wrapper, 'input:nth-child(2)', 'checkbox', 'likes', true, 'orange')
+      assertAttrs(wrapper, 'input:nth-child(3)', 'checkbox', 'likes', true, 'banana')
+      assertChecked(wrapper, 'input', ['apple', 'orange'])
+    })
+
+    it('should update its value with changing model', () => {
+      const wrapper = mount(create(`
+      <checkbox for="likes" value="apple"></checkbox>
+      <checkbox for="likes" value="orange"></checkbox>
+      <checkbox for="likes" value="banana"></checkbox>
+      `))
+
+      assertChecked(wrapper, 'input', ['apple', 'orange'])
+      wrapper.vm.user.likes = ['apple', 'banana']
+      return Vue.nextTick().then(() => {
+        assertChecked(wrapper, 'input', ['apple', 'banana'])
+      })
+    })
+
+    it('should update model with the input event from the field', () => {
+      const wrapper = mount(create(`
+      <checkbox for="likes" value="apple"></checkbox>
+      <checkbox for="likes" value="orange"></checkbox>
+      <checkbox for="likes" value="banana"></checkbox>
+      `))
+
+      assert.deepEqual(wrapper.vm.user.likes, ['apple', 'orange'])
+      assertChecked(wrapper, 'input', ['apple', 'orange'])
+
+      changeCheck(wrapper, 'input:nth-child(3)', true)
+      changeCheck(wrapper, 'input:nth-child(2)', false)
+
+      return Vue.nextTick().then(() => {
+        assert.deepEqual(wrapper.vm.user.likes, ['apple', 'banana'])
+        assertChecked(wrapper, 'input', ['apple', 'banana'])
+      })
+    })
+  })
 })

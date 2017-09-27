@@ -203,6 +203,72 @@ const RadioButton = createHelper(
   }
 )
 
+const Checkbox = createHelper(
+  'checkbox',
+  {
+    for: {
+      type: String,
+      required: true
+    },
+    value: {
+      type: null as any as { (): any }
+    },
+    trueValue: {
+      type: null as any as { (): any },
+      default: true
+    },
+    falseValue: {
+      type: null as any as { (): any },
+      default: false
+    }
+  },
+  (h, { model, props }) => {
+    const { for: name, value, trueValue, falseValue } = props
+
+    const checked = model.isMultiple(name)
+      ? looseIndexOf(model.getAttr(name), value) > -1
+      : model.getAttr(name) == trueValue
+
+    const change = model.isMultiple(name)
+      ? (event: Event) => {
+        const { checked } = event.target as HTMLInputElement
+        const modelValue = model.getAttr(name)
+        const index = looseIndexOf(modelValue, value)
+
+        if (checked) {
+          if (index < 0) {
+            model.input(name, modelValue.concat(value))
+          }
+        } else {
+          if (index > -1) {
+            const excluded = modelValue.slice(0, index)
+              .concat(modelValue.slice(index + 1))
+            model.input(name, excluded)
+          }
+        }
+      }
+      : (event: Event) => {
+        const { checked } = event.target as HTMLInputElement
+        model.input(name, checked ? trueValue : falseValue)
+      }
+
+    return h('input', {
+      attrs: {
+        type: 'checkbox',
+        name: model.attrName(name),
+        id: model.attrId(name, value)
+      },
+      domProps: {
+        value,
+        checked
+      },
+      on: {
+        change
+      }
+    })
+  }
+)
+
 const SelectField = createHelper(
   'select-field',
   {
@@ -251,5 +317,6 @@ export const helpers: { [key: string]: ComponentOptions<Vue> } = {
   RangeField,
   HiddenField,
   RadioButton,
+  Checkbox,
   SelectField
 }
