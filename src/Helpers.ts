@@ -299,6 +299,33 @@ const SelectField = createHelper(
   }
 )
 
+const TextArea = createHelper(
+  'text-area',
+  {
+    for: {
+      type: String,
+      required: true
+    }
+  },
+  (h, { model, props }) => {
+    const name = props.for
+    const modelValue = model.getAttr(name)
+
+    return h('textarea', {
+      attrs: {
+        name: model.attrName(name),
+        id: model.attrId(name)
+      },
+      domProps: {
+        value: modelValue
+      },
+      on: {
+        input: createInputListener(model, name, getValue)
+      }
+    }, modelValue)
+  }
+)
+
 export const helpers: { [key: string]: ComponentOptions<Vue> } = {
   TextField,
   NumberField,
@@ -318,5 +345,7 @@ export const helpers: { [key: string]: ComponentOptions<Vue> } = {
   HiddenField,
   RadioButton,
   CheckBox,
-  SelectField
+  SelectField,
+  // Avoid Vue's warning
+  'text-area': TextArea
 }

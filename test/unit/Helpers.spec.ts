@@ -914,4 +914,45 @@ describe('Helpers', () => {
       })
     })
   })
+
+  describe('text-area', () => {
+    it('should be converted to textarea element', () => {
+      const wrapper = mount(create(`<text-area for="name"></text-area>`))
+
+      assertAttrs(wrapper, 'textarea', null, 'name')
+      assertValue(wrapper, 'textarea', 'foo')
+
+      const el = q(wrapper, 'textarea')
+      assert(el.textContent === 'foo')
+    })
+
+    it('should update its value with changing model', () => {
+      const wrapper = mount(create(`<text-area for="name"></text-area>`))
+
+      assertValue(wrapper, 'textarea', 'foo')
+      wrapper.vm.user.name = 'bar'
+      return Vue.nextTick().then(() => {
+        assertValue(wrapper, 'textarea', 'bar')
+      })
+    })
+
+    it('should update model with the input event from the field', () => {
+      const wrapper = mount(create(`
+        <text-area for="name" class="a"></text-area>
+        <text-area for="name" class="b"></text-area>
+      `))
+
+      assert(wrapper.vm.user.name === 'foo')
+      assertValue(wrapper, '.a', 'foo')
+      assertValue(wrapper, '.b', 'foo')
+
+      inputValue(wrapper, '.a', 'bar')
+
+      return Vue.nextTick().then(() => {
+        assert(wrapper.vm.user.name === 'bar')
+        assertValue(wrapper, '.a', 'bar')
+        assertValue(wrapper, '.b', 'bar')
+      })
+    })
+  })
 })
