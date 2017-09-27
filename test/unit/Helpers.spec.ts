@@ -804,9 +804,9 @@ describe('Helpers', () => {
     })
   })
 
-  describe('checkbox (single)', () => {
+  describe('check-box (single)', () => {
     it('should be converted to input element', () => {
-      const wrapper = mount(create(`<checkbox for="hasPhone"></checkbox>`))
+      const wrapper = mount(create(`<check-box for="hasPhone"></check-box>`))
 
       assertAttrs(wrapper, 'input', 'checkbox', 'hasPhone')
       const checkbox = q(wrapper, 'input')
@@ -814,7 +814,7 @@ describe('Helpers', () => {
     })
 
     it('should update its value with changing model', () => {
-      const wrapper = mount(create(`<checkbox for="hasPhone"></checkbox>`))
+      const wrapper = mount(create(`<check-box for="hasPhone"></check-box>`))
 
       const checkbox = q(wrapper, 'input')
       assert(checkbox.checked === true)
@@ -825,7 +825,7 @@ describe('Helpers', () => {
     })
 
     it('should update model with the input event from the field', () => {
-      const wrapper = mount(create(`<checkbox for="hasPhone"></checkbox>`))
+      const wrapper = mount(create(`<check-box for="hasPhone"></check-box>`))
 
       const checkbox = q(wrapper, 'input')
 
@@ -842,7 +842,7 @@ describe('Helpers', () => {
 
     it('should be specified true value and false value', () => {
       const wrapper = mount(create(
-        `<checkbox for="gender" true-value="male" false-value="female"></checkbox>`
+        `<check-box for="gender" true-value="male" false-value="female"></check-box>`
       ))
 
       const checkbox = q(wrapper, 'input')
@@ -867,12 +867,12 @@ describe('Helpers', () => {
     })
   })
 
-  describe('checkbox (multiple)', () => {
+  describe('check-box (multiple)', () => {
     it('should be converted to input element', () => {
       const wrapper = mount(create(`
-      <checkbox for="likes" value="apple"></checkbox>
-      <checkbox for="likes" value="orange"></checkbox>
-      <checkbox for="likes" value="banana"></checkbox>
+      <check-box for="likes" value="apple"></check-box>
+      <check-box for="likes" value="orange"></check-box>
+      <check-box for="likes" value="banana"></check-box>
       `))
 
       assertAttrs(wrapper, 'input:nth-child(1)', 'checkbox', 'likes', true, 'apple')
@@ -883,9 +883,9 @@ describe('Helpers', () => {
 
     it('should update its value with changing model', () => {
       const wrapper = mount(create(`
-      <checkbox for="likes" value="apple"></checkbox>
-      <checkbox for="likes" value="orange"></checkbox>
-      <checkbox for="likes" value="banana"></checkbox>
+      <check-box for="likes" value="apple"></check-box>
+      <check-box for="likes" value="orange"></check-box>
+      <check-box for="likes" value="banana"></check-box>
       `))
 
       assertChecked(wrapper, 'input', ['apple', 'orange'])
@@ -897,9 +897,9 @@ describe('Helpers', () => {
 
     it('should update model with the input event from the field', () => {
       const wrapper = mount(create(`
-      <checkbox for="likes" value="apple"></checkbox>
-      <checkbox for="likes" value="orange"></checkbox>
-      <checkbox for="likes" value="banana"></checkbox>
+      <check-box for="likes" value="apple"></check-box>
+      <check-box for="likes" value="orange"></check-box>
+      <check-box for="likes" value="banana"></check-box>
       `))
 
       assert.deepEqual(wrapper.vm.user.likes, ['apple', 'orange'])

@@ -203,8 +203,8 @@ const RadioButton = createHelper(
   }
 )
 
-const Checkbox = createHelper(
-  'checkbox',
+const CheckBox = createHelper(
+  'check-box',
   {
     for: {
       type: String,
@@ -317,6 +317,6 @@ export const helpers: { [key: string]: ComponentOptions<Vue> } = {
   RangeField,
   HiddenField,
   RadioButton,
-  Checkbox,
+  CheckBox,
   SelectField
 }
