@@ -54,7 +54,7 @@
     "uglify-js": "^3.0.15",
     "vue": "^2.3.4",
     "vue-loader": "^12.2.1",
-    "vue-test-utils": "github:vuejs/vue-test-utils#61acd40",
+    "vue-test-utils": "^1.0.0-beta.1",
     "webpack": "^2.6.1",
     "webpack-espower-loader": "^1.0.2"
   }
