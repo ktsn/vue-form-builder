@@ -326,6 +326,28 @@ const TextArea = createHelper(
   }
 )
 
+const FieldLabel = createHelper(
+  'field-label',
+  {
+    for: {
+      type: String,
+      required: true
+    },
+    fieldValue: {
+      type: null as any as { (): any }
+    }
+  },
+  (h, { model, props, children }) => {
+    const { for: name, fieldValue } = props
+
+    return h('label', {
+      attrs: {
+        for: model.attrId(name, fieldValue)
+      }
+    }, children)
+  }
+)
+
 export const helpers: { [key: string]: ComponentOptions<Vue> } = {
   TextField,
   NumberField,
@@ -347,5 +369,6 @@ export const helpers: { [key: string]: ComponentOptions<Vue> } = {
   CheckBox,
   SelectField,
   // Avoid Vue's warning
-  'text-area': TextArea
+  'text-area': TextArea,
+  FieldLabel
 }

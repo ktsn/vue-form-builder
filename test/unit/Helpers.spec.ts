@@ -955,4 +955,21 @@ describe('Helpers', () => {
       })
     })
   })
+
+  describe('field-label', () => {
+    it('should add an appropriate "for" attribute', () => {
+      const wrapper = mount(create(`<field-label for="name">Label</field-label>`))
+
+      const label = wrapper.find('label')
+      assert(label.hasAttribute('for', 'user_name'))
+      assert(label.text() === 'Label')
+    })
+
+    it('should add suffix when specified fieldValue prop', () => {
+      const wrapper = mount(create(`<field-label for="likes" field-value="apple">apple</field-label>`))
+
+      const label = wrapper.find('label')
+      assert(label.hasAttribute('for', 'user_likes_apple'))
+    })
+  })
 })
