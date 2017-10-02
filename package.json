@@ -28,6 +28,7 @@
     "build:prod": "rollup -c scripts/rollup.config.js --environment BUILD:prod | uglifyjs -mc warnings=false --comments -o dist/vue-form-builder.min.js",
     "build:test": "cross-env NODE_ENV=test webpack --config scripts/webpack.config.unit.js",
     "watch:test": "cross-env NODE_ENV=test webpack -w --config scripts/webpack.config.unit.js",
+    "example": "webpack-dev-server --config example/webpack.config.js --hot --open",
     "testem": "testem",
     "testem:ci": "testem ci --launch PhantomJS",
     "test": "npm run test:unit",
@@ -56,6 +57,7 @@
     "vue-loader": "^12.2.1",
     "vue-test-utils": "^1.0.0-beta.1",
     "webpack": "^2.6.1",
+    "webpack-dev-server": "^2.9.1",
     "webpack-espower-loader": "^1.0.2"
   }
 }

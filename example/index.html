@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>vue-form-builder Example</title>
+</head>
+<body>
+  <div id="app">
+    <form-for v-model="formData" name="form">
+      <label for="name">Name: </label>
+      <text-field for="name"></text-field>
+
+      <div class="form-buttons">
+        <button type="submit">Submit</button>
+      </div>
+    </form-for>
+  </div>
+  <script src="__build__.js"></script>
+</body>
+</html>
