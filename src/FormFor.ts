@@ -8,9 +8,7 @@ export interface FormFor extends Vue {
   onUpdate(value: any): void
 }
 
-export interface FormForOptions extends ComponentOptions<FormFor> {}
-
-export default {
+const FormFor: ComponentOptions<FormFor> = {
   name: 'form-for',
 
   props: {
@@ -27,7 +25,7 @@ export default {
 
   model: {
     prop: 'model',
-    emit: 'input'
+    event: 'input'
   },
 
   computed: {
@@ -51,4 +49,6 @@ export default {
   render (h) {
     return h('form', this.$slots.default)
   }
-} as FormForOptions
+}
+
+export default FormFor
