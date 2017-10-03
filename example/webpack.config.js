@@ -4,7 +4,7 @@ const base = path.resolve(__dirname)
 
 module.exports = {
   context: base,
-  entry: './main.js',
+  entry: './main.ts',
   output: {
     path: base,
     filename: '__build__.js'
@@ -13,6 +13,24 @@ module.exports = {
     alias: {
       vue: 'vue/dist/vue.esm.js'
     }
+  },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        loader: 'ts-loader',
+        options: {
+          appendTsSuffixTo: [/\.vue$/]
+        }
+      },
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader',
+        options: {
+          scss: 'style-loader!css-loader!sass-loader'
+        }
+      }
+    ]
   },
   devServer: {
     contentBase: base
