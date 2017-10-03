@@ -1,12 +1,14 @@
 import Vue, { ComponentOptions } from 'vue'
 import { createModel, Model } from './model'
 
-interface FormFor extends Vue {
+export interface FormFor extends Vue {
   name: string,
   model: any,
   formModel: Model,
   onUpdate(value: any): void
 }
+
+export interface FormForOptions extends ComponentOptions<FormFor> {}
 
 export default {
   name: 'form-for',
@@ -49,4 +51,4 @@ export default {
   render (h) {
     return h('form', this.$slots.default)
   }
-} as ComponentOptions<FormFor>
+} as FormForOptions

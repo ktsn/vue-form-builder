@@ -1,4 +1,4 @@
-import _Vue from 'vue'
+import _Vue, { ComponentOptions } from 'vue'
 import { helpers } from './Helpers'
 import FormFor from './FormFor'
 import { assign } from './utils'
@@ -7,7 +7,7 @@ const FormBuilder = assign({
   FormFor
 }, helpers)
 
-export const FormBuilderMixin = {
+export const FormBuilderMixin: ComponentOptions<_Vue> = {
   components: FormBuilder
 }
 

@@ -1,7 +1,7 @@
 import Vue, { VNodeDirective } from 'vue'
 import { assign } from './utils'
 
-type Subscriber = (value: any) => void
+export type Subscriber = (value: any) => void
 
 export class Model {
   constructor(

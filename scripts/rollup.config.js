@@ -1,20 +1,10 @@
 const ts = require('typescript')
-const typescript = require('rollup-plugin-typescript')
-const vue = require('rollup-plugin-vue')
 const replace = require('rollup-plugin-replace')
 const meta = require('../package.json')
 
 const config = {
-  entry: 'src/index.ts',
-  plugins: [
-    vue({
-      css: false
-    }),
-    typescript({
-      typescript: ts,
-      exclude: 'node_modules/**'
-    })
-  ],
+  entry: 'lib/index.js',
+  plugins: [],
   moduleName: 'VueFormBuilder',
   exports: 'named',
   banner: `/*!
