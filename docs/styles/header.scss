@@ -1,0 +1,16 @@
+.header {
+  background-color: $color-base;
+
+  &-inner {
+    display: flex;
+    align-items: center;
+    margin: 0 auto;
+    height: 50px;
+    max-width: $max-width-content;
+  }
+
+  &-title {
+    color: #fff;
+    font-size: $font-size-title;
+  }
+}

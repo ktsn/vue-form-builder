@@ -1,0 +1,8 @@
+.content {
+  margin: 20px 0;
+
+  &-inner {
+    margin: 0 auto;
+    max-width: $max-width-content;
+  }
+}
