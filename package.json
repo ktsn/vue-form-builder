@@ -44,6 +44,7 @@
     "@types/mocha": "^2.2.44",
     "@types/power-assert": "^1.4.29",
     "browser-sync": "^2.18.13",
+    "buble": "^0.16.0",
     "chokidar": "^1.7.0",
     "cross-env": "^5.1.1",
     "css-loader": "^0.28.7",

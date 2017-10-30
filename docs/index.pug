@@ -9,19 +9,20 @@ html(lang="en")
     meta(http-equiv="X-UA-Compatible", content="ie=edge")
     title Vue Form Builder
     link(rel="stylesheet", href="https://unpkg.com/k-css@2.0.0/k.css")
+    link(rel="stylesheet", href="https://unpkg.com/prismjs@1.8.3/themes/prism.css")
     link(rel="stylesheet", href="style.css")
-  body
-    #app
-      header.header
-        .header-inner
-          h1.header-title Vue From Builder
-
-      .content
-        .content-inner
-          .doc
-            include templates/doc
-
+    script(src="https://unpkg.com/prismjs@1.8.3")
     script(src="https://unpkg.com/vue@2.5.2")
     script(src="vue-form-builder.js")
+  body
+    header.header
+      .header-inner
+        h1.header-title Vue From Builder
+
+    .content
+      .content-inner
+        .doc
+          include templates/doc
+
     script.
-      new Vue({ el: '#app' })
+      Prism.highlightAll();

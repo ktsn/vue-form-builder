@@ -1,2 +1,18 @@
 mixin example(name)
-  p= name
+  - const template = exampleTemplate(name)
+  .example
+    .example-result
+      .example-template(id=`example-${name}`)
+        != template
+      script.
+        ;(function() {
+          var vm = #{transpiledExampleScript(name)};
+          vm.$mount('#example-#{name}')
+        })()
+    .example-code
+      pre
+        code.language-html
+          = template
+      pre
+        code.language-js
+          = exampleScript(name)

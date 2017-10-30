@@ -1,0 +1,13 @@
+.example {
+  display: flex;
+  align-items: flex-start;
+
+  &-result,
+  &-code {
+    flex: 1 1 1px;
+  }
+
+  &-code {
+    margin-left: 20px;
+  }
+}
