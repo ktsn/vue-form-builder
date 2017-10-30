@@ -1,0 +1,22 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta http-equiv="X-UA-Compatible" content="ie=edge"><title>Vue Form Builder</title><link rel="stylesheet" href="https://unpkg.com/k-css@2.0.0/k.css"><link rel="stylesheet" href="https://unpkg.com/prismjs@1.8.3/themes/prism.css"><link rel="stylesheet" href="style.css"><script src="https://unpkg.com/prismjs@1.8.3"></script><script src="https://unpkg.com/vue@2.5.2"></script><script src="vue-form-builder.js"></script></head><body><header class="header"><div class="header-inner"><h1 class="header-title">Vue From Builder</h1></div></header><div class="content"><div class="content-inner"><div class="doc"><h2>Overview</h2><p>Vue Form Builder helps you to make a large number of forms regarding your model.</p><h2>Simplest Example</h2><div class="example"><div class="example-result"><div class="example-template" id="example-simplest-example"><form-for v-model="user" name="user">
+  <text-field for="name"></text-field>
+  <p>{{ user.name }}</p>
+</form-for></div><script>;(function() {
+  var vm = new Vue({
+  data: {
+    user: {
+      name: ''
+    }
+  }
+});
+  vm.$mount('#example-simplest-example')
+})()</script></div><div class="example-code"><pre><code class="language-html">&lt;form-for v-model=&quot;user&quot; name=&quot;user&quot;&gt;
+  &lt;text-field for=&quot;name&quot;&gt;&lt;/text-field&gt;
+  &lt;p&gt;{{ user.name }}&lt;/p&gt;
+&lt;/form-for&gt;</code></pre><pre><code class="language-js">new Vue({
+  data: {
+    user: {
+      name: ''
+    }
+  }
+})</code></pre></div></div></div></div></div><script>Prism.highlightAll();</script></body></html>
