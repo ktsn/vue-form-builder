@@ -24,7 +24,7 @@
   },
   "scripts": {
     "prepublishOnly": "npm run release",
-    "clean": "rm -rf dist .tmp",
+    "clean": "rm -rf dist dist-docs .tmp",
     "build": "run-s build:ts build:rollup",
     "build:ts": "tsc -p ./",
     "build:rollup": "node scripts/build.js",
@@ -37,11 +37,14 @@
     "test:unit": "run-s build:test testem:ci",
     "test:dev": "run-p watch:test testem",
     "release": "run-s test clean build",
-    "docs": "node scripts/build-docs.js"
+    "docs": "node scripts/build-docs.js",
+    "docs:dev": "node scripts/dev-docs.js"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.44",
     "@types/power-assert": "^1.4.29",
+    "browser-sync": "^2.18.13",
+    "chokidar": "^1.7.0",
     "cross-env": "^5.1.1",
     "css-loader": "^0.28.7",
     "glob": "^7.1.2",
