@@ -8,7 +8,7 @@ export interface FormFor extends Vue {
   onUpdate(value: any): void
 }
 
-const FormFor: ComponentOptions<FormFor> = {
+const FormFor: ComponentOptions<FormFor> & ThisType<FormFor & Vue> = {
   name: 'form-for',
 
   props: {

@@ -9,8 +9,7 @@
     ],
     "outDir": "lib",
     "declaration": true,
-    "strict": true,
-    "allowSyntheticDefaultImports": true
+    "strict": true
   },
   "include": [
     "src/**/*.ts"

@@ -7,7 +7,7 @@ module.exports = {
   entry: [resolve('test/unit/setup.ts')]
     .concat(glob.sync(resolve('test/unit/**/*.spec.ts'))),
   output: {
-    path: path.resolve(__dirname, '../.tmp'),
+    path: resolve('.tmp'),
     filename: 'test.js'
   },
   resolve: {
@@ -33,7 +33,7 @@ module.exports = {
       },
       {
         enforce: 'post',
-        test: /\.spec.ts$/,
+        test: /\.spec\.ts$/,
         loader: 'webpack-espower-loader'
       }
     ]

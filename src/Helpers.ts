@@ -3,29 +3,17 @@ import Vue, {
   CreateElement,
   VNode,
   VNodeData,
-  VNodeDirective
+  VNodeDirective,
+  PropOptions
 } from 'vue'
 
 import { Model } from './model'
 import { assert, toArray, looseIndexOf } from './utils'
 
-type PropType<T> = { (): T } | { new (...args: any[]): T & object }
-
-interface PropOptions<T> {
-  type?: PropType<T> | PropType<T>[]
-  required?: boolean;
-  default?: T | null | undefined | (() => object);
-  validator?(value: T): boolean;
-}
-
 interface HelperGeneratorContext<Props> {
   model: Model
   props: Props,
   children: VNode[]
-}
-
-type HelperPropOptions<Props> = {
-  [K in keyof Props]: PropOptions<Props[K]>
 }
 
 type HelperGenerator<Props> = (h: CreateElement, ctx: HelperGeneratorContext<Props>) => VNode
@@ -65,23 +53,23 @@ function setSelected(el: HTMLSelectElement, binding: VNodeDirective): void {
 
 function createHelper<Props>(
   name: string,
-  props: HelperPropOptions<Props>,
+  props: { [K in keyof Props]: PropOptions<Props[K]> },
   generator: HelperGenerator<Props>
-): ComponentOptions<Vue & { getModel: () => Model }> {
+): ComponentOptions<Vue> & ThisType<Vue & { getModel: () => Model }> {
   return {
     name,
-    props: props as any,
+    props: props,
     inject: ['getModel'],
     directives: {
       selectValue: selectValueDirective
     },
 
-    render(h) {
+    render(h): VNode {
       const model = this.getModel()
       assert(model, `<${name}> must be used in the <form-for> slot`)
       return generator(h, {
         model,
-        props: this.$props,
+        props: this.$props as Props,
         children: this.$slots.default
       })
     }
