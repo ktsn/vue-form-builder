@@ -200,22 +200,14 @@ const CheckBox = createHelper(
     },
     value: {
       type: null as any as { (): any }
-    },
-    trueValue: {
-      type: null as any as { (): any },
-      default: true
-    },
-    falseValue: {
-      type: null as any as { (): any },
-      default: false
     }
   },
   (h, { model, props }) => {
-    const { for: name, value, trueValue, falseValue } = props
+    const { for: name, value } = props
 
     const checked = model.isMultiple(name)
       ? looseIndexOf(model.getAttr(name), value) > -1
-      : model.getAttr(name) == trueValue
+      : Boolean(model.getAttr(name))
 
     const change = model.isMultiple(name)
       ? (event: Event) => {
@@ -237,7 +229,7 @@ const CheckBox = createHelper(
       }
       : (event: Event) => {
         const { checked } = event.target as HTMLInputElement
-        model.input(name, checked ? trueValue : falseValue)
+        model.input(name, checked)
       }
 
     return h('input', {

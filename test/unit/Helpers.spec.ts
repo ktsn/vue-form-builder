@@ -839,32 +839,6 @@ describe('Helpers', () => {
         assert(checkbox.checked === false)
       })
     })
-
-    it('should be specified true value and false value', () => {
-      const wrapper = mount(create(
-        `<check-box for="gender" true-value="male" false-value="female"></check-box>`
-      ))
-
-      const checkbox = q(wrapper, 'input')
-      assert(wrapper.vm.user.gender === 'male')
-      assert(checkbox.checked === true)
-
-      // Update model
-      wrapper.vm.user.gender = 'female'
-
-      return Vue.nextTick().then(() => {
-        assert(wrapper.vm.user.gender === 'female')
-        assert(checkbox.checked === false)
-
-        // Update checkbox
-        changeCheck(wrapper, 'input', true)
-
-        return Vue.nextTick()
-      }).then(() => {
-        assert(wrapper.vm.user.gender === 'male')
-        assert(checkbox.checked === true)
-      })
-    })
   })
 
   describe('check-box (multiple)', () => {
