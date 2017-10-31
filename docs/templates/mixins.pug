@@ -1,6 +1,13 @@
 mixin example(name)
   - const template = exampleTemplate(name)
   .example
+    .example-code-wrapper
+      pre.example-code
+        code.language-html
+          = template
+      pre.example-code
+        code.language-js
+          = exampleScript(name)
     .example-result
       .example-template(id=`example-${name}`)
         != template
@@ -9,10 +16,3 @@ mixin example(name)
           var vm = #{transpiledExampleScript(name)};
           vm.$mount('#example-#{name}')
         })()
-    .example-code
-      pre
-        code.language-html
-          = template
-      pre
-        code.language-js
-          = exampleScript(name)

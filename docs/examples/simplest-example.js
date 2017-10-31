@@ -1,7 +1,7 @@
 new Vue({
   data: {
     user: {
-      name: ''
+      name: 'John Do'
     }
   }
 })
